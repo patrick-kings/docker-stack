@@ -1,0 +1,75 @@
+version: "3.9"
+
+services:
+  registry:
+    hostname: registry
+    image: registry:2
+    networks:
+      - app
+    ports:
+      - 5000:5000
+    environment:
+      REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY: /data
+      REGISTRY_AUTH: htpasswd
+      REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
+      REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
+      REGISTRY_HTTP_TLS_KEY: /run/secrets/certificate.key
+      REGISTRY_HTTP_TLS_CERTIFICATE: /run/secrets/certificate.crt
+      REGISTRY_HTTP_SECRET: registree
+      REGISTRY_HTTP_ADDR: 0.0.0.0:5000
+    volumes:
+      - registry_data:/data
+      - ./auth/htpasswd:/auth/htpasswd:ro
+    deploy:
+      restart_policy:
+        condition: on-failure
+    secrets:
+      - certificate.key
+      - certificate.crt
+
+  proxy:
+    image: 192.168.0.13:5000/nginx:latest
+    networks:
+      - app
+    ports:
+      - "8080:80"
+      - "8443:443"
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    # configs:
+    #   - source: https.conf
+    #     target: /etc/nginx/conf.d/https.conf
+
+  whoami:
+    image: emilevauge/whoami:latest
+    networks:
+      - app
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+
+configs:
+  https.conf:
+    file: config/https-backend.conf
+
+secrets:
+  certificate.key:
+    file: cert/cert.key
+  certificate.crt:
+    file: cert/cert.crt
+
+volumes:
+  registry_data:
+
+networks:
+  app:
+    driver: overlay
