@@ -20,6 +20,7 @@ services:
     volumes:
       - registry_data:/data
       - ./auth/htpasswd:/auth/htpasswd:ro
+      - ./config/registry_config.yml:/etc/docker/registry/config/yml
     deploy:
       restart_policy:
         condition: on-failure
@@ -38,9 +39,11 @@ services:
       replicas: 2
       update_config:
         parallelism: 1
+        failure_action: rollback
         delay: 10s
       restart_policy:
-        condition: on-failure
+        condition: any
+        delay: 2s
     # configs:
     #   - source: https.conf
     #     target: /etc/nginx/conf.d/https.conf
