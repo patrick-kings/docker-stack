@@ -29,7 +29,7 @@ services:
       - certificate.crt
 
   proxy:
-    image: 192.168.0.13:5000/nginx:1
+    image: 192.168.0.13:5000/nginx:1 # the registry
     networks:
       - app
     ports:
