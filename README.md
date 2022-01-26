@@ -17,6 +17,6 @@
    > docker build -t 192.168.0.13:5000/nginx:1 -f Dockerfile-nginx .
    > docker push 192.168.0.13:5000/nginx:1
 
-5. Deploy the stack
+5. Update the stack so it picks up the image we just pushed to the registry
 
    > docker stack deploy -c docker-stack.yml --with-registry-auth stackd
