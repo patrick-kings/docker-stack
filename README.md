@@ -1,12 +1,12 @@
 # Deploy a stack in docker swarm
 
-1. Deploy the stack
-
-   > docker stack deploy -c docker-stack.yml --with-registry-auth stackd
-
-2. create a password file for the registry
+1. create a password file for the registry
 
    > docker run --entrypoint htpasswd httpd:2 -Bbn test test > auth/htpasswd
+
+2. Deploy the stack
+
+   > docker stack deploy -c docker-stack.yml --with-registry-auth stackd
 
 3. login to the registry
 
