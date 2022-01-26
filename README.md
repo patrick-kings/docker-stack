@@ -6,7 +6,7 @@
 
 2. create a password file for the registry
 
-   > docker run --entrypoint htpasswd httpd:2 -Bbn test test > auth/ht
+   > docker run --entrypoint htpasswd httpd:2 -Bbn test test > auth/htpasswd
 
 3. login to the registry
 
